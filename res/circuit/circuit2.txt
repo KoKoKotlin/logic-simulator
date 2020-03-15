@@ -1,0 +1,16 @@
+AND[1, 1, 2]
+
+NOT[1, 5]
+NOT[5, 3]
+
+SRC[0, 0, false]
+SRC[0, 1, false]
+SRC[0, 2, false]
+
+LMP[6, 3]
+
+CONN[3->0, 0->0, false, false]
+CONN[4->0, 0->1, false, false]
+CONN[5->0, 1->0, false, false]
+CONN[2->0, 6->0, false, false]
+CONN[{0->0; 1->0}, {2->0}, false, false, false, {2|1.5;3.5|1.5;3.5|3.5_2|5.5;3.5|5.5;3.5|3.5_3.5|3.5;5|3.5}, {3.5|3.5}]
