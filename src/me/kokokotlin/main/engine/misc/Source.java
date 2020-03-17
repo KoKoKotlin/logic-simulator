@@ -9,17 +9,16 @@ import me.kokokotlin.main.engine.logicgates.Pin;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Source extends SchematicElement {
 
     private boolean isOn;
 
     public Source(int worldX, int worldY, boolean isOn) {
-        super(worldX, worldY, DrawingConstants.CELL_SIZE, DrawingConstants.CELL_SIZE);
+        super(worldX, worldY, DrawingConstants.CELL_SIZE, DrawingConstants.CELL_SIZE, "SRC");
 
         outputs = new ArrayList<>(1);
-        outputs.add(new Pin(false));
+        outputs.add(new Pin(false, this));
 
         this.isOn = isOn;
     }
@@ -37,6 +36,11 @@ public class Source extends SchematicElement {
     @Override
     public void propagate() {
         outputs.get(0).setState(LogicStates.fromBoolean(isOn));
+    }
+
+    @Override
+    public String getArguments() {
+        return String.format("[%d, %d, %b]", worldPos.x, worldPos.y, isOn);
     }
 
     @Override

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Lamp extends SchematicElement {
 
     public Lamp(int worldX, int worldY) {
-        super(worldX, worldY, DrawingConstants.CELL_SIZE, DrawingConstants.CELL_SIZE);
+        super(worldX, worldY, DrawingConstants.CELL_SIZE, DrawingConstants.CELL_SIZE, "LMP");
 
         this.inputs = new ArrayList<>(1);
         inputs.add(null);
@@ -26,6 +26,11 @@ public class Lamp extends SchematicElement {
     @Override
     public double calcOutputPosY(int outputIndex) {
         return 0;
+    }
+
+    @Override
+    public String getArguments() {
+        return String.format("[%d, %d]", worldPos.x, worldPos.y);
     }
 
     @Override

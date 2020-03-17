@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 
 public class FileUtils {
 
-    public static JFileChooser getChooserWitihTitle(String title) {
+    public static JFileChooser getChooserWithTitle(String title) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(Paths.get(".").toFile());
         fileChooser.setDialogTitle(title);

@@ -20,10 +20,10 @@ abstract public class LogicGate extends SchematicElement {
 
     private BufferedImage sprite;
 
-    public LogicGate(String name, int numInputs, Dimension size, int worldX, int worldY) {
-        super(worldX, worldY, DrawingConstants.CELL_SIZE, DrawingConstants.CELL_SIZE);
+    public LogicGate(String REPR, int numInputs, Dimension size, int worldX, int worldY) {
+        super(worldX, worldY, DrawingConstants.CELL_SIZE, DrawingConstants.CELL_SIZE, REPR);
 
-        this.name = name;
+        this.name = REPR;
         this.inputs = new ArrayList<>(numInputs);
         for (int i = 0; i < numInputs; i++) {
             this.inputs.add(null);
@@ -51,14 +51,14 @@ abstract public class LogicGate extends SchematicElement {
             if(inputs.get(i) == null) {
                 System.out.println("Gate input at pos " + i + " is null at the end of loading -> defaulting to PullUp");
 
-                inputs.set(i, new Pin(true));
+                inputs.set(i, new Pin(true, this));
             }
         }
 
         if(outputs.get(0) == null) {
             System.out.println("Gate output is null at the end of loading -> defaulting to PullDown");
 
-            outputs.set(0, new Pin(false));
+            outputs.set(0, new Pin(false, this));
         }
     }
 
@@ -104,6 +104,11 @@ abstract public class LogicGate extends SchematicElement {
             ((Graphics2D) g).setStroke(new BasicStroke(5f));
             g.drawRect(screenX, screenY, DrawingConstants.CELL_SIZE, DrawingConstants.CELL_SIZE);
         }
+    }
+
+    @Override
+    public String getArguments() {
+        return String.format("[%d, %d, %d]", worldPos.x, worldPos.y, inputs.size());
     }
 
     @Override

@@ -3,6 +3,7 @@ package me.kokokotlin.main.engine.connectios;
 import me.kokokotlin.main.drawing.Drawable;
 import me.kokokotlin.main.drawing.DrawingConstants;
 import me.kokokotlin.main.drawing.DrawingPriorities;
+import me.kokokotlin.main.engine.SchematicElement;
 import me.kokokotlin.main.engine.logicgates.LogicStates;
 import me.kokokotlin.main.engine.logicgates.Pin;
 import me.kokokotlin.main.math.Point2f;
@@ -46,6 +47,55 @@ public class Connection implements Drawable {
         }
 
         return LogicStates.fromBoolean(result);
+    }
+
+    private int[] findGateWithPin(boolean findInput, Pin pin, List<SchematicElement> elements) {
+        int indecies[] = {-1, -1};
+
+            for(int i = 0; i < elements.size(); i++) {
+                SchematicElement se = elements.get(i);
+
+                if (findInput && se.getInputs() != null) {
+                    int inputIndex = se.getInputs().indexOf(pin);
+                    if(inputIndex != -1) {
+                        indecies[0] = i;
+                        indecies[1] = inputIndex;
+                        break;
+                    }
+                } else if(!findInput && se.getOutputs() != null) {
+                    int outputIndex = se.getOutputs().indexOf(pin);
+                    if(outputIndex != -1) {
+                        indecies[0] = i;
+                        indecies[1] = outputIndex;
+                        break;
+                    }
+                }
+            }
+
+        return indecies;
+    }
+
+    public String getStringRepr(List<SchematicElement> elements) {
+        StringBuilder sBuilder = new StringBuilder("CONN[");
+
+        if(outputs.size() == 1 && inputs.size() == 1) {
+            // quick method
+
+            int outIndecies[] = findGateWithPin(false, outputs.get(0), elements);
+            int inIndecies[] = findGateWithPin(true, inputs.get(0), elements);
+
+            boolean outPullUp = elements.get(outIndecies[0]).getOutputs().get(outIndecies[1]).isPullUp();
+            boolean inPullUp = elements.get(inIndecies[0]).getInputs().get(inIndecies[1]).isPullUp();
+
+            sBuilder.append(String.format("%d->%d, %d->%d, %b, %b", outIndecies[0], outIndecies[1],
+                    inIndecies[0], inIndecies[1], outPullUp, inPullUp));
+
+        } else {
+            // long method
+        }
+
+        sBuilder.append(']');
+        return sBuilder.toString();
     }
 
     @Override

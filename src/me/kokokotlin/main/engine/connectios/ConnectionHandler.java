@@ -15,8 +15,8 @@ public class ConnectionHandler {
 
     public void addConnection(SchematicElement elemOut, SchematicElement elemIn,
                               int outputIndex, int inputIndex, boolean outPullUp, boolean inPullUp) {
-        final Pin output = new Pin(outPullUp);
-        final Pin input = new Pin(inPullUp);
+        final Pin output = new Pin(outPullUp, elemOut);
+        final Pin input = new Pin(inPullUp, elemIn);
 
         elemOut.setOutput(outputIndex, output);
         elemIn.setInput(inputIndex, input);
@@ -50,16 +50,16 @@ public class ConnectionHandler {
         final List<Pin> inputs = new ArrayList<>(inIndices.length);
 
         for (int i = 0; i < outIndices.length; i++) {
-            final Pin out = new Pin(outPullUp[i]);
             int[] outPair = outIndices[i];
+            final Pin out = new Pin(outPullUp[i], elements.get(outPair[0]));
 
             elements.get(outPair[0]).setOutput(outPair[1], out);
             outputs.add(out);
         }
 
         for (int i = 0; i < inIndices.length; i++) {
-            final Pin in = new Pin(inPullUp[i]);
             int[] inPair = inIndices[i];
+            final Pin in = new Pin(inPullUp[i], elements.get(inPair[0]));
 
             elements.get(inPair[0]).setInput(inPair[1], in);
             inputs.add(in);

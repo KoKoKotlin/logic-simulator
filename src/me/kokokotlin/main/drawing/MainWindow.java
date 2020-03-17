@@ -1,8 +1,10 @@
 package me.kokokotlin.main.drawing;
 
+import me.kokokotlin.main.engine.SchematicElement;
 import me.kokokotlin.main.engine.State;
 import me.kokokotlin.main.engine.UpdateHandler;
 import me.kokokotlin.main.io.CircuitLoader;
+import me.kokokotlin.main.io.CircuitSaver;
 import me.kokokotlin.main.io.FileUtils;
 
 import javax.swing.*;
@@ -86,6 +88,7 @@ public class MainWindow extends Canvas implements Runnable {
         file.add(save);
 
         JMenuItem saveAs = new JMenuItem("Save As");
+        saveAs.addActionListener(e -> saveCircuitAs());
         file.add(saveAs);
 
         JMenuItem loadFromFile = new JMenuItem("Load From File");
@@ -148,13 +151,28 @@ public class MainWindow extends Canvas implements Runnable {
     }
 
     private void loadSchematicFromFile() {
-        JFileChooser fc = FileUtils.getChooserWitihTitle("Choose File to load from");
+        JFileChooser fc = FileUtils.getChooserWithTitle("Choose File to load from");
         int result = fc.showOpenDialog(window);
 
         if(result == JFileChooser.APPROVE_OPTION) {
             Path p = fc.getSelectedFile().toPath();
 
             CircuitLoader.loadCircuit(p, this, updateHandler);
+        }
+    }
+
+    private void saveCircuitAs() {
+        JFileChooser fc = FileUtils.getChooserWithTitle("Choose File to save in");
+        int result = fc.showOpenDialog(window);
+
+        if(result == JFileChooser.APPROVE_OPTION) {
+            List<SchematicElement> elements = updateHandler.getUpdateables()
+                    .stream()
+                    .filter(u -> u instanceof SchematicElement)
+                    .map(s -> (SchematicElement)s)
+                    .collect(Collectors.toList());
+
+            CircuitSaver.saveCircuit(fc.getSelectedFile().toPath(), elements, updateHandler);
         }
     }
 

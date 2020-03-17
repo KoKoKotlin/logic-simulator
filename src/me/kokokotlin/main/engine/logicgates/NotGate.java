@@ -9,6 +9,11 @@ public class NotGate extends LogicGate {
     }
 
     @Override
+    public String getArguments() {
+        return String.format("[%d, %d]", worldPos.x, worldPos.y);
+    }
+
+    @Override
     public void calcOutput() {
         boolean result = LogicStates.toBoolean(inputs.get(0).getState());
 

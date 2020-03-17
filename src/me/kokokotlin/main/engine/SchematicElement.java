@@ -20,13 +20,16 @@ abstract public class SchematicElement implements Drawable, Updateable {
     private final int LEAD_WIDTH;
 
     private boolean highlight = false;
+    public final String REPR;
 
-    public SchematicElement(int worldX, int worldY, int width, int height) {
+    public SchematicElement(int worldX, int worldY, int width, int height, String REPR) {
         this.worldPos = new Point(worldX, worldY);
         this.size = new Dimension(width, height);
 
         this.LEAD_LENGTH = (int) (DrawingConstants.CELL_SIZE * 0.25);
         this.LEAD_WIDTH = (int) (DrawingConstants.CELL_SIZE * (1 / 20.0));
+
+        this.REPR = REPR;
     }
 
     protected double getMiddleY() {
@@ -36,6 +39,8 @@ abstract public class SchematicElement implements Drawable, Updateable {
     public abstract double calcInputPosY(int inputIndex);
 
     public abstract double calcOutputPosY(int outputIndex);
+
+    public abstract String getArguments();
 
     public Point getWorldPos() {
         return worldPos;
@@ -99,5 +104,13 @@ abstract public class SchematicElement implements Drawable, Updateable {
 
     public void setWorldPos(Point p) {
         this.worldPos = p;
+    }
+
+    public List<Pin> getInputs() {
+        return inputs;
+    }
+
+    public List<Pin> getOutputs() {
+        return outputs;
     }
 }
