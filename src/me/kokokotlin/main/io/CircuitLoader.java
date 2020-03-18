@@ -40,7 +40,7 @@ public class CircuitLoader {
         String error = "";
 
         try (BufferedReader bReader = Files.newBufferedReader(path)) {
-            String lines[] = bReader.lines()
+            String[] lines = bReader.lines()
                     .filter(line -> !line.isEmpty()).toArray(String[]::new);
 
             for (int i = 0; i < lines.length; i++) {
@@ -49,7 +49,7 @@ public class CircuitLoader {
 
                 String command = line.split("\\[")[0];
 
-                String rawData[] = line.split("\\[")[1]
+                String[] rawData = line.split("\\[")[1]
                         .replaceAll(" ", "")
                         .replace("]", "")
                         .split(",");
@@ -95,7 +95,7 @@ public class CircuitLoader {
         return error;
     }
 
-    private static LogicGate loadLogicGate(String gateName, String rawData[]) {
+    private static LogicGate loadLogicGate(String gateName, String[] rawData) {
         LogicGate gate;
         int[] data = Arrays.stream(rawData).mapToInt(Integer::parseInt).toArray();
 
@@ -130,7 +130,7 @@ public class CircuitLoader {
         return gate;
     }
 
-    private static Source loadSource(String rawData[]) {
+    private static Source loadSource(String[] rawData) {
         int x = Integer.parseInt(rawData[0]);
         int y = Integer.parseInt(rawData[1]);
         boolean isOn = Boolean.parseBoolean(rawData[2]);
@@ -138,12 +138,12 @@ public class CircuitLoader {
         return new Source(x, y, isOn);
     }
 
-    private static Lamp loadLamp(String rawData[]) {
+    private static Lamp loadLamp(String[] rawData) {
         int[] data = Arrays.stream(rawData).mapToInt(Integer::parseInt).toArray();
         return new Lamp(data[0], data[1]);
     }
 
-    private static void loadConnection(String rawData[], UpdateHandler updateHandler,
+    private static void loadConnection(String[] rawData, UpdateHandler updateHandler,
                                        List<SchematicElement> elements) {
 
         // quick load
@@ -209,7 +209,7 @@ public class CircuitLoader {
                 paths, pivots, elements);
     }
 
-    private static void quickLoadConnection(String rawData[], UpdateHandler updateHandler,
+    private static void quickLoadConnection(String[] rawData, UpdateHandler updateHandler,
                                             List<SchematicElement> elements) {
         final int outGateIndex = Integer.parseInt(rawData[0].split("->")[0]);
         final int outIndex = Integer.parseInt(rawData[0].split("->")[1]);
