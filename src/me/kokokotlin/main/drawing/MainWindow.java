@@ -156,14 +156,21 @@ public class MainWindow extends Canvas implements Runnable {
 
         if(result == JFileChooser.APPROVE_OPTION) {
             Path p = fc.getSelectedFile().toPath();
+            reset();
 
-            CircuitLoader.loadCircuit(p, this, updateHandler);
+            String errorMsg = CircuitLoader.loadCircuit(p, this, updateHandler);
+            if(!errorMsg.isBlank()) {
+                JOptionPane.showMessageDialog(null,
+                        "Load failed! " + errorMsg,
+                        "Loading error!",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
     private void saveCircuitAs() {
         JFileChooser fc = FileUtils.getChooserWithTitle("Choose File to save in");
-        int result = fc.showOpenDialog(window);
+        int result = fc.showSaveDialog(window);
 
         if(result == JFileChooser.APPROVE_OPTION) {
             List<SchematicElement> elements = updateHandler.getUpdateables()
@@ -174,6 +181,11 @@ public class MainWindow extends Canvas implements Runnable {
 
             CircuitSaver.saveCircuit(fc.getSelectedFile().toPath(), elements, updateHandler);
         }
+    }
+
+    private void reset() {
+        drawables.clear();
+        updateHandler.reset(this);
     }
 
     @Override

@@ -35,43 +35,54 @@ public class CircuitLoader {
                 x and y of extra Points are screen coordinates
 
     */
-    public static List<SchematicElement> loadCircuit(Path path, MainWindow mainWindow, UpdateHandler updateHandler) {
+    public static String loadCircuit(Path path, MainWindow mainWindow, UpdateHandler updateHandler) {
         List<SchematicElement> elements = new ArrayList<>();
+        String error = "";
 
         try (BufferedReader bReader = Files.newBufferedReader(path)) {
-            bReader.lines()
-                    .filter(line -> !line.isEmpty())
-                    .forEach(line -> {
-                        String command = line.split("\\[")[0];
+            String lines[] = bReader.lines()
+                    .filter(line -> !line.isEmpty()).toArray(String[]::new);
 
-                        String rawData[] = line.split("\\[")[1]
-                                .replaceAll(" ", "")
-                                .replace("]", "")
-                                .split(",");
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                error = String.format("Error in line %d: %s", i, line);
 
-                        switch (command) {
-                            case "AND": case "OR": case "NOT": case "NOR": case "NAND": case "XOR": {
-                                elements.add(loadLogicGate(command, rawData));
-                                break;
-                            }
-                            case "CONN": {
-                                loadConnection(rawData, updateHandler, elements);
-                                break;
-                            }
-                            case "SRC": {
-                                elements.add(loadSource(rawData));
-                                break;
-                            }
-                            case "LMP": {
-                                elements.add(loadLamp(rawData));
-                                break;
-                            }
-                        }
-                    });
+                String command = line.split("\\[")[0];
+
+                String rawData[] = line.split("\\[")[1]
+                        .replaceAll(" ", "")
+                        .replace("]", "")
+                        .split(",");
+
+                switch (command) {
+                    case "AND":
+                    case "OR":
+                    case "NOT":
+                    case "NOR":
+                    case "NAND":
+                    case "XOR": {
+                        elements.add(loadLogicGate(command, rawData));
+                        break;
+                    }
+                    case "CONN": {
+                        loadConnection(rawData, updateHandler, elements);
+                        break;
+                    }
+                    case "SRC": {
+                        elements.add(loadSource(rawData));
+                        break;
+                    }
+                    case "LMP": {
+                        elements.add(loadLamp(rawData));
+                        break;
+                    }
+                }
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            return error;
         }
 
+        error = "";
         elements.forEach(element -> {
             if (element instanceof LogicGate) ((LogicGate) element).finish();
 
@@ -81,7 +92,7 @@ public class CircuitLoader {
 
         updateHandler.getConnHandler().getConns().forEach(mainWindow::addDrawable);
 
-        return elements;
+        return error;
     }
 
     private static LogicGate loadLogicGate(String gateName, String rawData[]) {
@@ -136,7 +147,7 @@ public class CircuitLoader {
                                        List<SchematicElement> elements) {
 
         // quick load
-        if(rawData.length == 4) {
+        if (rawData.length == 4) {
             quickLoadConnection(rawData, updateHandler, elements);
             return;
         }
@@ -167,7 +178,7 @@ public class CircuitLoader {
             isOutputPullup[i] = Boolean.parseBoolean(rawData[i + 2]);
         }
 
-        for(int i = 0; i < inputCount; i++) {
+        for (int i = 0; i < inputCount; i++) {
             isInputPullup[i] = Boolean.parseBoolean(rawData[i + 2 + outputCount]);
         }
 
@@ -179,7 +190,7 @@ public class CircuitLoader {
 
         final List<List<Point2f>> paths = new ArrayList<>();
 
-        for(String pathData: pathsData.split("_")) {
+        for (String pathData : pathsData.split("_")) {
             final List<Point2f> path = Arrays.stream(pathData.split(";"))
                     .map(str -> Arrays.stream(str.split("\\|")).mapToDouble(Double::parseDouble).toArray())
                     .map(doubles -> new Point2f(doubles[0], doubles[1]))

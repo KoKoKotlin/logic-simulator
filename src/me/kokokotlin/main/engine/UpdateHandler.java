@@ -8,7 +8,6 @@ import me.kokokotlin.main.engine.connectios.ConnectionHandler;
 import me.kokokotlin.main.engine.editor.SchematicManipulator;
 
 import java.awt.*;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -181,5 +180,13 @@ public class UpdateHandler implements Runnable, Drawable {
     public void handleMouseMoved(Point p) {
         if(currentState == State.EDITING)
             smc.setPosition(p);
+    }
+
+    public void reset(MainWindow window) {
+        updateables.clear();
+        connHandler.getConns().clear();
+
+        initSmc(window);
+        currentState = State.VIEWING;
     }
 }
